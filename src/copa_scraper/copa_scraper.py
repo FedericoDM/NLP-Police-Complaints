@@ -15,10 +15,11 @@ headers = {
 
 
 class COPAScraper:
-    URL = URL
+    PORTAL_URL = URL
 
     def __init__(self):
         self.headers = headers
+        self.case_url = "https://www.chicagocopa.org/case"
 
     def extract_table(self, url):
         """Extracts the table from the given url"""
@@ -28,6 +29,12 @@ class COPAScraper:
         soup = BeautifulSoup(r.content, "html.parser")
         table = soup.find("table")
         df = pd.read_html(str(table))[table_index]
+
+        # Construct case URLs
+        df.loc[:, "case_url"] = df["Case Number"].apply(
+            lambda x: f"{self.case_url}/{x}/"
+        )
+
         return df
 
 
