@@ -1,5 +1,6 @@
 """This script will extract the data from the COPA website"""
 
+import re
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
@@ -20,6 +21,26 @@ class COPAScraper:
     def __init__(self):
         self.headers = headers
         self.case_url = "https://www.chicagocopa.org/case"
+
+        self.get_num_pages()
+        print(f"Number of pages: {self.last_page}")
+
+    def get_num_pages(self):
+        """Gets the number of pages in the table"""
+        r = requests.get(self.PORTAL_URL, headers=self.headers)
+        soup = BeautifulSoup(r.content, "html.parser")
+        pagination = soup.find("div", {"class": "pagination"})
+
+        # Get text from pagination
+        pagination_text = pagination.text
+        pagination_text = pagination_text.replace("\n", "")
+
+        # Use regex to extract the last page
+        numbers = re.findall(r"\d+", pagination_text)
+        if numbers:
+            self.last_page = int(numbers[-1])
+        else:
+            self.last_page = 1
 
     @staticmethod
     def construct_pdf_url(df):
@@ -64,6 +85,6 @@ class COPAScraper:
 
 if __name__ == "__main__":
     scraper = COPAScraper()
-    tables = scraper.extract_table(URL)
-    tables.to_csv("copa_data.csv", index=False)
-    print(tables)
+    # tables = scraper.extract_table(URL)
+    # tables.to_csv("copa_data.csv", index=False)
+    # print(tables)
