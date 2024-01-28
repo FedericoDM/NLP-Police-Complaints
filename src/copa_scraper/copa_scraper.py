@@ -82,6 +82,16 @@ class COPAScraper:
 
         return df
 
+    def extract_all_tables(self):
+        """Extracts all tables from the portal"""
+        dfs = []
+        for num_page in range(1, self.last_page + 1):
+            url = f"{self.PORTAL_URL}?_page={num_page}"
+            df = self.extract_table(url)
+            dfs.append(df)
+
+        return pd.concat(dfs, ignore_index=True)
+
 
 if __name__ == "__main__":
     scraper = COPAScraper()
