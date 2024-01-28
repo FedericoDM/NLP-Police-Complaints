@@ -31,7 +31,7 @@ class COPAScraper:
     def get_num_pages(self):
         """Gets the number of pages in the table"""
         r = requests.get(self.PORTAL_URL, headers=self.headers)
-        soup = BeautifulSoup(StringIO(r.content), "html.parser")
+        soup = BeautifulSoup(r.content, "html.parser")
         pagination = soup.find("div", {"class": "pagination"})
 
         # Get text from pagination
@@ -65,7 +65,7 @@ class COPAScraper:
         r = requests.get(url, headers=self.headers)
         soup = BeautifulSoup(r.content, "html.parser")
         table = soup.find("table")
-        df = pd.read_html(str(table))[table_index]
+        df = pd.read_html(StringIO(str(table)))[table_index]
 
         # Construct case URLs
         df.loc[:, "case_url"] = df["Log#"].apply(lambda x: f"{self.case_url}/{x}/")
