@@ -1,10 +1,12 @@
 """This script will extract the data from the COPA website"""
 
 import re
+import time
+from io import StringIO
+
+import pandas as pd
 import requests
 from bs4 import BeautifulSoup
-import pandas as pd
-
 
 # PARAMETERS
 URL = "https://www.chicagocopa.org/data-cases/case-portal/"
@@ -21,6 +23,7 @@ class COPAScraper:
     def __init__(self):
         self.headers = headers
         self.case_url = "https://www.chicagocopa.org/case"
+        self.threshold = 5
 
         self.get_num_pages()
         print(f"Number of pages: {self.last_page}")
@@ -28,7 +31,7 @@ class COPAScraper:
     def get_num_pages(self):
         """Gets the number of pages in the table"""
         r = requests.get(self.PORTAL_URL, headers=self.headers)
-        soup = BeautifulSoup(r.content, "html.parser")
+        soup = BeautifulSoup(StringIO(r.content), "html.parser")
         pagination = soup.find("div", {"class": "pagination"})
 
         # Get text from pagination
@@ -43,24 +46,14 @@ class COPAScraper:
             self.last_page = 1
 
     @staticmethod
-    def construct_pdf_url(df):
-        """Constructs the pdf url given the case number and
-        the FSR Posted Date if available"""
-
-        # Extract case number
-        case_number = df["Log#"]
+    def is_pdf_available(df):
+        """Determines if the PDF is available or not"""
 
         # We need month and year of FSR Posted Date
         raw_date = str(df["FSR/Memo Posted Date"])
 
         if "/" in raw_date:
-            # Extract month and year
-            split_date = raw_date.split("/")
-            month = split_date[0]
-            year = split_date[2]
-
-            # Construct url
-            return f"https://www.chicagocopa.org/wp-content/uploads/{year}/{month}/{case_number}_FSR.pdf"
+            return "Available"
 
         else:
             return "Not Available"
@@ -78,7 +71,7 @@ class COPAScraper:
         df.loc[:, "case_url"] = df["Log#"].apply(lambda x: f"{self.case_url}/{x}/")
 
         # Construct PDF URLs
-        df.loc[:, "pdf_url"] = df.apply(self.construct_pdf_url, axis=1)
+        df.loc[:, "pdf_available"] = df.apply(self.is_pdf_available, axis=1)
 
         return df
 
@@ -86,15 +79,19 @@ class COPAScraper:
         """Extracts all tables from the portal"""
         dfs = []
         for num_page in range(1, self.last_page + 1):
-            url = f"{self.PORTAL_URL}?_page={num_page}"
+            url = f"{self.PORTAL_URL}?sf_paged={num_page}"
             df = self.extract_table(url)
             dfs.append(df)
 
-        return pd.concat(dfs, ignore_index=True)
+            if num_page % self.threshold == 0:
+                print(f"Finished extracting page {num_page}")
+                time.sleep(5)
+
+        self.all_tables = pd.concat(dfs, ignore_index=True)
+        return self.all_tables
 
 
 if __name__ == "__main__":
     scraper = COPAScraper()
-    # tables = scraper.extract_table(URL)
-    # tables.to_csv("copa_data.csv", index=False)
-    # print(tables)
+    tables = scraper.extract_all_tables()
+    tables.to_csv("copa_data.csv", index=False)
