@@ -1,5 +1,6 @@
 """This script will extract the data from the COPA website"""
 
+import os
 import re
 import time
 from io import StringIO
@@ -16,11 +17,17 @@ headers = {
     "User-Agent": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36",
 }
 
+PDF_PATH = "../data/copa_pdfs/"
+
 
 class COPAScraper:
     PORTAL_URL = URL
 
     def __init__(self):
+        # Check if PDF path exists, if not, create it
+        if not os.path.exists(PDF_PATH):
+            os.makedirs(PDF_PATH)
+
         self.headers = headers
         self.case_url = "https://www.chicagocopa.org/case"
         self.threshold = 5
@@ -90,8 +97,50 @@ class COPAScraper:
         self.all_tables = pd.concat(dfs, ignore_index=True)
         return self.all_tables
 
+    def extract_all_pdfs(self):
+        """Extracts all PDFs from the portal"""
+        # Get all the urls
+        valid_cases = self.all_tables[self.all_tables["pdf_available"] == "Available"]
+        urls = valid_cases["case_url"].values
+        case_log = valid_cases["Log#"].values
+
+        # Get all the PDF urls
+        pdf_urls = []
+        for url, case_log in zip(urls[:5], case_log[:5]):
+            pdf_url = self.get_pdf_url(url)
+            pdf_urls.append(pdf_url)
+
+            print(pdf_url)
+
+        # Add to dataframe
+        self.all_tables.loc[:, "pdf_url"] = pdf_urls
+
+        return self.all_tables
+
+    def get_pdf_url(self, url):
+        """
+        Extract the pdf given the url
+        """
+        r = requests.get(url, headers=self.headers)
+        soup = BeautifulSoup(r.content, "html.parser")
+
+        # Search for element with text 'Final Summary Report'
+        pdf_url = None
+        for a in soup.find_all("a", href=True):
+            if "Final Summary Report" in a.text:
+                pdf_url = a["href"]
+
+        # If found, download the pdf
+        if pdf_url is not None:
+            with open("test.pdf", "wb") as f:
+                f.write(requests.get(pdf_url).content)
+
+        return pdf_url
+
 
 if __name__ == "__main__":
     scraper = COPAScraper()
-    tables = scraper.extract_all_tables()
-    tables.to_csv("copa_data.csv", index=False)
+    # tables = scraper.extract_all_tables()
+    # tables.to_csv("copa_data.csv", index=False)
+    scraper.all_tables = pd.read_csv("copa_data.csv")
+    tables = scraper.extract_all_pdfs()
