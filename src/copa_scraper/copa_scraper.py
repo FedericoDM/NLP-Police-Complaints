@@ -126,9 +126,9 @@ class COPAScraper:
             counter += 1
 
         # Add to dataframe
-        self.all_tables.loc[:, "pdf_url"] = pdf_urls
+        valid_cases.loc[:, "pdf_url"] = pdf_urls
 
-        return self.all_tables
+        return valid_cases
 
     def get_pdf_url(self, url, case_log):
         """
@@ -138,7 +138,7 @@ class COPAScraper:
         soup = BeautifulSoup(r.content, "html.parser")
 
         # Search for element with text 'Final Summary Report'
-        pdf_url = None
+        pdf_url = "Not Found"
         for a in soup.find_all("a", href=True):
             if "Final Summary Report" in a.text:
                 pdf_url = a["href"]
@@ -148,7 +148,9 @@ class COPAScraper:
             r = requests.get(pdf_url, stream=True, headers=self.headers)
             with open(f"{self.PDF_PATH}/{case_log}.pdf", "wb") as f:
                 f.write(r.content)
-                print(f"Downloaded {case_log}.pdf")
+
+        else:
+            print(f"PDF not found for {case_log}")
 
         return pdf_url
 
@@ -158,4 +160,5 @@ if __name__ == "__main__":
     # tables = scraper.extract_all_tables()
     # tables.to_csv("copa_data.csv", index=False)
     scraper.all_tables = pd.read_csv(f"{PDF_PATH}/copa_data.csv")
-    tables = scraper.extract_all_pdfs()
+    valid_cases = scraper.extract_all_pdfs()
+    valid_cases.to_csv(f"{PDF_PATH}/copa_data_with_pdf.csv", index=False)
