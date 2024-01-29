@@ -17,20 +17,25 @@ headers = {
     "User-Agent": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36",
 }
 
-PDF_PATH = "../data/copa_pdfs/"
+PDF_PATH = "data/"
 
 
 class COPAScraper:
     PORTAL_URL = URL
+    PDF_PATH = PDF_PATH
 
     def __init__(self):
         # Check if PDF path exists, if not, create it
         if not os.path.exists(PDF_PATH):
             os.makedirs(PDF_PATH)
+            print(f"Created {PDF_PATH} directory")
+        else:
+            print(f"{PDF_PATH} directory already exists")
 
         self.headers = headers
         self.case_url = "https://www.chicagocopa.org/case"
         self.threshold = 5
+        self.pdf_threshold = 10
 
         self.get_num_pages()
         print(f"Number of pages: {self.last_page}")
@@ -106,18 +111,26 @@ class COPAScraper:
 
         # Get all the PDF urls
         pdf_urls = []
-        for url, case_log in zip(urls[:5], case_log[:5]):
-            pdf_url = self.get_pdf_url(url)
+        counter = 1
+        for url, case_log in zip(urls, case_log):
+            try:
+                pdf_url = self.get_pdf_url(url, case_log)
+            except Exception as e:
+                print(f"Error: {e}")
+                pdf_url = "Error"
             pdf_urls.append(pdf_url)
+            if counter % self.pdf_threshold == 0:
+                print(f"Finished extracting PDF {counter}")
+                time.sleep(2.5)
 
-            print(pdf_url)
+            counter += 1
 
         # Add to dataframe
         self.all_tables.loc[:, "pdf_url"] = pdf_urls
 
         return self.all_tables
 
-    def get_pdf_url(self, url):
+    def get_pdf_url(self, url, case_log):
         """
         Extract the pdf given the url
         """
@@ -132,8 +145,10 @@ class COPAScraper:
 
         # If found, download the pdf
         if pdf_url is not None:
-            with open("test.pdf", "wb") as f:
-                f.write(requests.get(pdf_url).content)
+            r = requests.get(pdf_url, stream=True, headers=self.headers)
+            with open(f"{self.PDF_PATH}/{case_log}.pdf", "wb") as f:
+                f.write(r.content)
+                print(f"Downloaded {case_log}.pdf")
 
         return pdf_url
 
@@ -142,5 +157,5 @@ if __name__ == "__main__":
     scraper = COPAScraper()
     # tables = scraper.extract_all_tables()
     # tables.to_csv("copa_data.csv", index=False)
-    scraper.all_tables = pd.read_csv("copa_data.csv")
+    scraper.all_tables = pd.read_csv(f"{PDF_PATH}/copa_data.csv")
     tables = scraper.extract_all_pdfs()
