@@ -54,4 +54,3 @@ if __name__ == "__main__":
     cleaner = PDFCleaner()
     useless_pdfs = cleaner.get_useless_pdfs()
     cleaner.remove_useless_pdfs()
-    print("Useless PDFs removed")
