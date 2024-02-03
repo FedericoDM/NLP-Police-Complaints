@@ -1,7 +1,6 @@
 """This script removes PDFs that are not useful for the project"""
 
 import os
-import re
 import pandas as pd
 
 # PARAMETERS
