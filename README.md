@@ -12,7 +12,14 @@ The pipeline can be run like this, where you need the complete path to the `copa
 
 ```python3 /NLP-Police-Complaints/src/copa_scraper/copa_scraper.py```
 
-b. Then, we need to remove the PDF files that do not correspond to a Final Summary Report. This is done with the `remove_useles_pdfs.py` script in the `src/data_cleaning/` folder. This script reads the 
+b. Then, we need to remove the PDF files that do not correspond to a Final Summary Report. This is done with the `remove_useles_pdfs.py` script in the `src/data_cleaning/` folder. This script reads the `copa_data_with_pdf.csv` file from the `data/` folder (this .csv file was obtained in the previous step) and removes the PDFs that do not correspond to a Final Summary Report. The script is run like this:
+
+```python3 /NLP-Police-Complaints/src/data_cleaning/remove_useless_pdfs.py```
+
+
+### 2. Extracting the text from the PDFs
+
+This was done with Jonathan's `extractor.py` code.
 
 
 
