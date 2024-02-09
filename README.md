@@ -19,7 +19,7 @@ b. Then, we need to remove the PDF files that do not correspond to a Final Summa
 
 ### 2. Extracting the text from the PDFs
 
-This was done using `extractor.py`. PyPDF2 library was used to iteratively extract the text from each PDF file, then compiled into CSV format to analyze correct extraction. After this step, text blocks from each log report were placed into respective txt files.
+This was done using `extractor.py`. PyPDF2 library was used to extract the text from each PDF file iteratively, then compiled into CSV format to analyze for correct extraction. After this step, text blocks from each log report were placed into respective txt files.
 
 
 
