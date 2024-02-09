@@ -1,14 +1,15 @@
 """This script extracts the files from all PDFs"""
 
-import os
-import PyPDF2
 import csv
+import os
 import re
+
 import pandas as pd
-from constants import repo_root
+import PyPDF2
+from src.constants import repo_root
 
 # set path to local directory
-path = repo_root / "data"
+path = repo_root / "data/pdfs"
 pdf_files = [file for file in os.listdir(path) if file.endswith(".pdf")]
 
 if pdf_files:
@@ -61,7 +62,7 @@ def process_all_pdfs(directory_path, output_csv_path):
 
 
 # This attempts to extract text from all pds, then stores it into text_data.csv
-directory_path = "/content/drive/Shared drives/Advanced ML Cops Project /data"
+directory_path = "/data/pdfs"
 output_csv_path = directory_path / "text_data.csv"
 
 process_all_pdfs(path, output_csv_path)
