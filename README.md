@@ -21,5 +21,6 @@ b. Then, we need to remove the PDF files that do not correspond to a Final Summa
 
 This was done using `extractor.py`. PyPDF2 library was used to extract the text from each PDF file iteratively, then compiled into CSV format to analyze for correct extraction. After this step, text blocks from each log report were placed into respective txt files.
 
+Note that this script roughly takes 2 hours to run. Greater efficiency can be done by tweaking parts of the code or using a different PDF extractor package.
 
 
