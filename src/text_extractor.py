@@ -6,7 +6,7 @@ import re
 
 import pandas as pd
 import PyPDF2
-from src.constants import repo_root
+from constants import repo_root
 
 # set path to local directory
 path = repo_root / "data/pdfs"
@@ -63,7 +63,7 @@ def process_all_pdfs(directory_path, output_csv_path):
 
 # This attempts to extract text from all pds, then stores it into text_data.csv
 directory_path = "/data/pdfs"
-output_csv_path = directory_path / "text_data.csv"
+output_csv_path = f"{directory_path}/text_data.csv"
 
 process_all_pdfs(path, output_csv_path)
 
