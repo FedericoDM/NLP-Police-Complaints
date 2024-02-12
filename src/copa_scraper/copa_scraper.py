@@ -17,7 +17,7 @@ headers = {
     "User-Agent": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36",
 }
 
-PDF_PATH = "data/"
+PDF_PATH = "data/pdfs/"
 
 
 class COPAScraper:
@@ -158,11 +158,11 @@ class COPAScraper:
 if __name__ == "__main__":
     scraper = COPAScraper()
 
-    if os.path.exists(f"{PDF_PATH}/copa_data.csv"):
-        scraper.all_tables = pd.read_csv(f"{PDF_PATH}/copa_data.csv")
+    if os.path.exists("data/copa_data.csv"):
+        scraper.all_tables = pd.read_csv("data/copa_data.csv")
     else:
         tables = scraper.extract_all_tables()
         tables.to_csv("copa_data.csv", index=False)
 
     valid_cases = scraper.extract_all_pdfs()
-    valid_cases.to_csv(f"{PDF_PATH}/copa_data_with_pdf.csv", index=False)
+    valid_cases.to_csv("data/copa_data_with_pdf.csv", index=False)
