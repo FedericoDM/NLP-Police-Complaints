@@ -1,12 +1,15 @@
-import os
-import PyPDF2
+"""This script extracts the files from all PDFs"""
+
 import csv
+import os
 import re
+
 import pandas as pd
+import PyPDF2
 from constants import repo_root
 
 # set path to local directory
-path =  repo_root / "data"
+path = repo_root / "data/pdfs"
 pdf_files = [file for file in os.listdir(path) if file.endswith(".pdf")]
 
 if pdf_files:
@@ -14,8 +17,9 @@ if pdf_files:
 else:
     print("No PDF files found in the specified path.")
 
+
 def extract_text_from_pdf(pdf_file_path):
-    with open(pdf_file_path, 'rb') as file:
+    with open(pdf_file_path, "rb") as file:
         reader = PyPDF2.PdfReader(file)
         num_pages = len(reader.pages)
 
@@ -30,6 +34,7 @@ def extract_text_from_pdf(pdf_file_path):
 
         return text_data
 
+
 def process_all_pdfs(directory_path, output_csv_path):
     pdf_files = [file for file in os.listdir(directory_path) if file.endswith(".pdf")]
 
@@ -37,36 +42,37 @@ def process_all_pdfs(directory_path, output_csv_path):
         print("No PDF files found in the specified directory.")
         return
 
-    with open(output_csv_path, 'w', newline='', encoding='utf-8') as csv_file:
+    with open(output_csv_path, "w", newline="", encoding="utf-8") as csv_file:
         csv_writer = csv.writer(csv_file)
-        csv_writer.writerow(['Log#', 'Text'])
+        csv_writer.writerow(["Log#", "Text"])
 
         total_pdfs_processed = 0
 
         for pdf_file in pdf_files:
-            log_number = pdf_file.replace('.pdf', '')
+            log_number = pdf_file.replace(".pdf", "")
             pdf_file_path = os.path.join(directory_path, pdf_file)
             text_data = extract_text_from_pdf(pdf_file_path)
             csv_writer.writerow([log_number, text_data])
 
             total_pdfs_processed += 1
 
-            #print progress after processing each PDF
+            # print progress after processing each PDF
             print(log_number)
             print(f"PDFs processed: {total_pdfs_processed}")
 
+
 # This attempts to extract text from all pds, then stores it into text_data.csv
-directory_path = "/content/drive/Shared drives/Advanced ML Cops Project /data"
-output_csv_path = directory_path / "text_data.csv"
+directory_path = "/data/pdfs"
+output_csv_path = f"{directory_path}/text_data.csv"
 
 process_all_pdfs(path, output_csv_path)
 
 # try using other extractor libraries as the above didn't work to extract all text
 # text from 30 reports missing
 
-#pip install pdfplumber PyMuPDF PyPDFium
+# pip install pdfplumber PyMuPDF PyPDFium
 
-#import fitz  # PyMuPDF
+# import fitz  # PyMuPDF
 
 # def extract_text_from_pdf(pdf_file_path):
 #     try:
@@ -95,11 +101,11 @@ output_folder = path / "text_files"
 os.makedirs(output_folder, exist_ok=True)
 
 for index, row in df.iterrows():
-    log_number = str(row['Log#'])
-    text_data = str(row['Text'])
+    log_number = str(row["Log#"])
+    text_data = str(row["Text"])
 
     filename = os.path.join(output_folder, f"{log_number}.txt")
 
     # Save the text as a .txt file
-    with open(filename, 'w', encoding='utf-8') as txt_file:
+    with open(filename, "w", encoding="utf-8") as txt_file:
         txt_file.write(text_data)
