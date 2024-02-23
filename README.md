@@ -35,7 +35,10 @@ Matt also did some exploratory analysis, which is not currently in the repo. His
 
 **Data Cleaning**
 
-In order to create a unified cleaning procedure, we created the `TextParser` class in the `text_parser.py` file. This class contains methods to clean the text, such as removing punctuation, removing stop words, lemmatizing, etc. The class works as follows:
+In order to create a unified cleaning procedure, we created the `TextParser` class in the `text_parser.py` file. This class contains methods to clean the text, such as removing punctuation, removing stop words, lemmatizing, etc. Note that several constants are defined _within_ the file.
+
+
+The class works as follows:
 
 ```python
 from text_parser import TextParser
