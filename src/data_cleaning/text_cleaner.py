@@ -96,10 +96,18 @@ class TextParser:
     CUSTOM_STOPS = CUSTOM_STOPS
     FINDING_STOPS = FINDING_STOPS
 
-    def __init__(self, path, nlp_task, add_more_stops=False, findings_are_stops=False):
+    def __init__(
+        self,
+        path,
+        nlp_task,
+        add_more_stops=False,
+        findings_are_stops=False,
+    ):
         self.path = path
 
         if nlp_task == "topic modeling":
+
+            print("Initializing parsers for topic modeling...")
             self.stemmer = SnowballStemmer(language="english")
             self.lemmatizer = WordNetLemmatizer()
             self.stops = list(stopwords.words("english"))
@@ -124,9 +132,10 @@ class TextParser:
 
         return lines
 
-    def file_to_string(self, filename):
+    def file_to_string(self, filename, lower_text=True):
         """
-        Add each line of a text file to a string
+        Add each line of a text file to a string, text is
+        lowercased by default
         """
         text = ""
         file_path = os.path.join(self.path, filename)
@@ -137,7 +146,8 @@ class TextParser:
                 text += line
 
         text = text.strip()
-        text = text.lower()
+        if lower_text:
+            text = text.lower()
         text = re.sub(r"\s+", " ", text)
 
         # Remove REGEX patterns
@@ -181,7 +191,8 @@ class TextParser:
     ):
         """
         Extract text from every .txt file in a folder.
-        Returns (list): a corpus, with each document's text as a single long string
+        Returns (list): a corpus, with each document's text as a single
+        long string
         """
         DIR = os.path.join(os.getcwd(), "text_files")
         print(DIR)
