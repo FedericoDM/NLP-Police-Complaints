@@ -1,5 +1,6 @@
 """
-This script contains a class that performs all the necessary text cleaning
+This script contains a class that performs all the necessary text cleaning 
+for the current NLP tasks
 """
 
 import os
@@ -16,6 +17,9 @@ from nltk.stem import WordNetLemmatizer
 from nltk.stem.snowball import (
     SnowballStemmer,
 )  # https://www.geeksforgeeks.org/snowball-stemmer-nlp/
+
+
+# CONSTANTS
 
 CHARS_TO_REMOVE = ["\n", "§"]
 REGEX_PATTERNS = [
@@ -42,29 +46,6 @@ REGEX_PATTERNS = [
 ]
 
 
-add_more_stops = False
-findings_are_stops = False
-if add_more_stops:
-    # consider customizing the list of stopwords more to remove very common words
-    custom_stops = [
-        "officer",
-        "chicago",
-        "il",
-        "illinois",
-        "copa",
-        "th",
-        "",
-        "incident",
-        "ms",
-        "mrs",
-        "mr",
-        "ipra",
-    ]
-    stops += custom_stops
-if findings_are_stops:
-    finding_stops = ["sustained", "not sustained", "unfounded", "exonerated"]
-    stops += finding_stops
-
 HEADERS = re.compile(
     r"independent police review authority|"
     r"civilian office of police accountability|"
@@ -90,18 +71,44 @@ HEADERS = re.compile(
 )
 
 
+# consider customizing the list of stopwords more to remove very common words
+CUSTOM_STOPS = [
+    "officer",
+    "chicago",
+    "il",
+    "illinois",
+    "copa",
+    "th",
+    "",
+    "incident",
+    "ms",
+    "mrs",
+    "mr",
+    "ipra",
+]
+FINDING_STOPS = ["sustained", "not sustained", "unfounded", "exonerated"]
+
+
 class TextParser:
     CHARS_TO_REMOVE = CHARS_TO_REMOVE
     REGEX_PATTERNS = REGEX_PATTERNS
     HEADERS = HEADERS
+    CUSTOM_STOPS = CUSTOM_STOPS
+    FINDING_STOPS = FINDING_STOPS
 
-    def __init__(self, path, nlp_task):
+    def __init__(self, path, nlp_task, add_more_stops=False, findings_are_stops=False):
         self.path = path
 
         if nlp_task == "topic modeling":
             self.stemmer = SnowballStemmer(language="english")
             self.lemmatizer = WordNetLemmatizer()
             self.stops = list(stopwords.words("english"))
+
+            if add_more_stops:
+                self.stops += self.CUSTOM_STOPS
+
+            if findings_are_stops:
+                self.stops += self.FINDING_STOPS
 
     def txt_to_list(self, filename):
         """
@@ -139,7 +146,12 @@ class TextParser:
         return text
 
     def preprocess(
-        data: str, remove_stops=True, stem=True, lemmatize=True, return_as_list=True
+        self,
+        data: str,
+        remove_stops=True,
+        stem=True,
+        lemmatize=True,
+        return_as_list=True,
     ):
         """Pre-process the contents of a .txt file."""
         data = re.sub("\n", " ", data)
@@ -150,17 +162,18 @@ class TextParser:
 
         data = data.split(" ")
         if remove_stops:
-            data = [w for w in data if w not in stops]
+            data = [w for w in data if w not in self.stops]
             if stem:
-                data = [stemmer.stem(w) for w in data]
+                data = [self.stemmer.stem(w) for w in data]
             elif lemmatize:  # TODO: try both and see what happens
-                data = [lemmatizer.lemmatize(w) for w in data]
+                data = [self.lemmatizer.lemmatize(w) for w in data]
         if return_as_list:
             return [w for w in data if w != ""]
         else:
             return " ".join(data)
 
     def get_full_corpus(
+        self,
         preprocess_input=True,
         stem_input=False,
         lemmatize_input=False,
@@ -184,7 +197,7 @@ class TextParser:
                     data = "".join(f.readlines())
                 data = re.sub("\n", " ", data)
                 if preprocess_input:
-                    data = preprocess(
+                    data = self.preprocess(
                         data,
                         stem=stem_input,
                         lemmatize=lemmatize_input,
@@ -195,11 +208,3 @@ class TextParser:
         if print_progress:
             print("Corpus text extraction complete")
         return corpus
-
-    # Hyperparameter to tune: whether corpus is stemmed, lemmatized, both, or neither
-    raw_corpus = get_full_corpus()
-    print("Raw corpus complete")
-    stemmed_corpus = get_full_corpus(stem_input=True)
-    print("Stemmed corpus complete")
-    lemmatized_corups = get_full_corpus(lemmatize_input=True)
-    print("Lemmatized corpus complete")
