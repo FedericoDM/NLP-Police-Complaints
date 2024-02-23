@@ -29,3 +29,8 @@ Note that this script roughly takes 2 hours to run. Greater efficiency can be do
 You can find the exploratory data analysis in the `exploratory/` folder. I added my own EDA (`fede_exploratory.ipynb`), where I use a summarizer model from Hugging Face and get a summary for ten random complaints. I pre-processed the text and I also tweaked with some model hyperparameters. The results are in the notebook, along with some steps to follow.
 
 Matt also did some exploratory analysis, which is not currently in the repo. His focuses more on topic modelling.
+
+
+## Additional Information
+
+In order to create a unified cleaning procedure, we created the 'TextCleaner' class. 

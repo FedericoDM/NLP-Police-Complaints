@@ -18,7 +18,6 @@ from nltk.stem.snowball import (
     SnowballStemmer,
 )  # https://www.geeksforgeeks.org/snowball-stemmer-nlp/
 
-
 # CONSTANTS
 
 CHARS_TO_REMOVE = ["\n", "§"]
@@ -104,6 +103,9 @@ class TextParser:
         findings_are_stops=False,
     ):
         self.path = path
+        self.nlp_task = nlp_task
+        self.add_more_stops = add_more_stops
+        self.findings_are_stops = findings_are_stops
 
         if nlp_task == "topic modeling":
 
@@ -112,11 +114,14 @@ class TextParser:
             self.lemmatizer = WordNetLemmatizer()
             self.stops = list(stopwords.words("english"))
 
-            if add_more_stops:
+            if self.add_more_stops:
                 self.stops += self.CUSTOM_STOPS
 
-            if findings_are_stops:
+            if self.findings_are_stops:
                 self.stops += self.FINDING_STOPS
+
+        else:
+            print(f"Initializing parsers for {self.nlp_task}")
 
     def txt_to_list(self, filename):
         """
