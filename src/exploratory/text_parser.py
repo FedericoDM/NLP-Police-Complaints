@@ -102,6 +102,7 @@ class TextParser:
         add_more_stops=False,
         findings_are_stops=False,
     ):
+        # Path should be the folder where the .txt files are located
         self.path = path
         self.nlp_task = nlp_task
         self.add_more_stops = add_more_stops
@@ -199,16 +200,13 @@ class TextParser:
         Returns (list): a corpus, with each document's text as a single
         long string
         """
-        DIR = os.path.join(os.getcwd(), "text_files")
-        print(DIR)
-
         corpus = []
 
-        for i, filename in enumerate(os.listdir(DIR)):
+        for i, filename in enumerate(os.listdir(self.path)):
             if print_progress and i % 100 == 0:
                 print(f"Extracting text from file {i}...")
             if filename.endswith(".txt"):
-                filepath = os.path.join(DIR, filename)
+                filepath = os.path.join(self.path, filename)
                 with open(filepath, "r") as f:
                     data = "".join(f.readlines())
                 data = re.sub("\n", " ", data)
