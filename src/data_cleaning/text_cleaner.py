@@ -3,6 +3,7 @@ This script contains a class that performs all the necessary text cleaning
 """
 
 import os
+import re
 
 CHARS_TO_REMOVE = ["\n", "§"]
 REGEX_PATTERNS = [
@@ -70,3 +71,25 @@ class TextParser:
         for pattern in self.REGEX_PATTERNS:
             text = re.sub(pattern, "", text, flags=re.IGNORECASE)
         return text
+
+    def preprocess(
+        data: str, remove_stops=True, stem=True, lemmatize=True, return_as_list=True
+    ):
+        """Pre-process the contents of a .txt file."""
+        data = re.sub("\n", " ", data)
+        data = data.lower()
+        data = re.sub(r"[^\w\s]|/|\_", "", data)
+        data = re.sub(r"\d+", "", data)  # remove all numbers
+        data = re.sub(HEADERS, "", data)
+
+        data = data.split(" ")
+        if remove_stops:
+            data = [w for w in data if w not in stops]
+            if stem:
+                data = [stemmer.stem(w) for w in data]
+            elif lemmatize:  # TODO: try both and see what happens
+                data = [lemmatizer.lemmatize(w) for w in data]
+        if return_as_list:
+            return [w for w in data if w != ""]
+        else:
+            return " ".join(data)
