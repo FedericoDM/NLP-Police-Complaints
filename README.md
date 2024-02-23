@@ -29,3 +29,53 @@ Note that this script roughly takes 2 hours to run. Greater efficiency can be do
 You can find the exploratory data analysis in the `exploratory/` folder. I added my own EDA (`fede_exploratory.ipynb`), where I use a summarizer model from Hugging Face and get a summary for ten random complaints. I pre-processed the text and I also tweaked with some model hyperparameters. The results are in the notebook, along with some steps to follow.
 
 Matt also did some exploratory analysis, which is not currently in the repo. His focuses more on topic modelling.
+
+
+## Additional Information
+
+**Data Cleaning**
+
+In order to create a unified cleaning procedure, we created the `TextParser` class in the `text_parser.py` file. This class contains methods to clean the text, such as removing punctuation, removing stop words, lemmatizing, etc. Note that several constants are defined _within_ the file.
+
+
+The class works as follows:
+
+```python
+from text_parser import TextParser
+
+# Add the path to the text files
+PATH = "path/to/text_files"
+
+# Create the TextCleaner object, be sure to specify the NLP task
+text_parser = TextParser(PATH, nlp_task="summarization")
+
+# Random complaint file to string 
+complaints = os.listdir(PATH)
+complaints = [complaint for complaint in 
+             complaints if complaint.endswith(".txt")]
+complaints = random.sample(complaints, 1)
+
+
+# The text can be used for later NLP tasks
+
+complaint_text = text_parser.file_to_string(complaint)
+
+```
+
+If one were to do topic modeling, this would work as follows:
+
+```python
+from text_parser import TextParser
+
+# Add the path to the text files
+PATH = "path/to/text_files"
+
+text_parser = TextParser(PATH, nlp_task="topic_modeling")
+
+raw_corpus = text_parser.get_full_corpus()
+print("Raw corpus complete")
+stemmed_corpus = text_parser.get_full_corpus(stem_input=True)
+print("Stemmed corpus complete")
+lemmatized_corups = text_parser.get_full_corpus(lemmatize_input=True)
+print("Lemmatized corpus complete")
+```
