@@ -2,6 +2,12 @@
 
 Repository with code for the CAPP30255 - Advanced Machine Learning Project
 
+Team members:
+
+- Jonathan Juarez
+- Matt Jackson
+- Federico Dominguez Molina
+
 The aim of the project is to apply a Natural Language Processing Task (NLP) on the Police Complaints available at [COPA's Case Portal](https://www.chicagocopa.org/data-cases/case-portal/). There project consists of three main parts:
 
 ### 1. Scraping the data
