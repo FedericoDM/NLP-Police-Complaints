@@ -5,6 +5,7 @@ for the current NLP tasks
 
 import os
 import re
+import datetime
 
 import nltk
 
@@ -19,6 +20,8 @@ from nltk.stem.snowball import (
 )  # https://www.geeksforgeeks.org/snowball-stemmer-nlp/
 
 # CONSTANTS
+
+from name_stops import STREET_STOPS, SUFFIX_STOPS, NAME_STOPS
 
 CHARS_TO_REMOVE = ["\n", "§"]
 REGEX_PATTERNS = [
@@ -72,18 +75,16 @@ HEADERS = re.compile(
 
 # consider customizing the list of stopwords more to remove very common words
 CUSTOM_STOPS = [
-    "officer",
+    "officer", "officers",
     "chicago",
-    "il",
-    "illinois",
-    "copa",
+    "il", "illinois",
+    "copa", "ipra",
     "th",
     "",
     "incident",
-    "ms",
-    "mrs",
-    "mr",
-    "ipra",
+    "ms", "mrs", "mr",
+    "subject",
+    "log", "date", "time"
 ]
 FINDING_STOPS = ["sustained", "not sustained", "unfounded", "exonerated"]
 
@@ -95,18 +96,24 @@ class TextParser:
     CUSTOM_STOPS = CUSTOM_STOPS
     FINDING_STOPS = FINDING_STOPS
 
+    STREET_STOPS = STREET_STOPS
+    SUFFIX_STOPS = SUFFIX_STOPS
+    NAME_STOPS = NAME_STOPS
+
     def __init__(
         self,
         path,
         nlp_task,
-        add_more_stops=False,
+        add_custom_stops=False,
         findings_are_stops=False,
+        names_are_stops=False
     ):
         # Path should be the folder where the .txt files are located
         self.path = path
         self.nlp_task = nlp_task
-        self.add_more_stops = add_more_stops
+        self.add_custom_stops = add_custom_stops
         self.findings_are_stops = findings_are_stops
+        self.names_are_stops = names_are_stops
 
         if nlp_task == "topic modeling":
 
@@ -115,14 +122,19 @@ class TextParser:
             self.lemmatizer = WordNetLemmatizer()
             self.stops = list(stopwords.words("english"))
 
-            if self.add_more_stops:
+            if self.add_custom_stops:
                 self.stops += self.CUSTOM_STOPS
 
             if self.findings_are_stops:
                 self.stops += self.FINDING_STOPS
 
+            if self.names_are_stops:
+                self.stops += STREET_STOPS + SUFFIX_STOPS + NAME_STOPS
+
         else:
             print(f"Initializing parsers for {self.nlp_task}")
+            self.stops = list(stopwords.words("english")) #default stops go here
+            # instead of being set in preprocess()
 
     def txt_to_list(self, filename):
         """
@@ -180,12 +192,14 @@ class TextParser:
 
         data = data.split(" ")
         if remove_stops:
-            self.stops = list(stopwords.words("english")) #added 
+            # self.stops = list(stopwords.words("english")) #added 
+            # ^ this would override all the added stops. instead declare in __init__
             data = [w for w in data if w not in self.stops]
             if stem:
                 self.stemmer = SnowballStemmer(language="english")
                 data = [self.stemmer.stem(w) for w in data]
-            elif lemmatize:  # TODO: try both and see what happens
+            elif lemmatize:  
+                # doing both stem and lemmatize seems no different than lemmatize-only
                 self.lemmatizer = WordNetLemmatizer()
                 data = [self.lemmatizer.lemmatize(w) for w in data]
         if return_as_list:
@@ -196,9 +210,12 @@ class TextParser:
     def get_full_corpus(
         self,
         preprocess_input=True,
+        remove_stops=True,
         stem_input=False,
         lemmatize_input=False,
         print_progress=False,
+        write_to_file=False,
+        write_path="../../corpora/"
     ):
         """
         Extract text from every .txt file in a folder.
@@ -218,6 +235,7 @@ class TextParser:
                 if preprocess_input:
                     data = self.preprocess(
                         data,
+                        remove_stops=remove_stops,
                         stem=stem_input,
                         lemmatize=lemmatize_input,
                         return_as_list=False,
@@ -226,4 +244,32 @@ class TextParser:
 
         if print_progress:
             print("Corpus text extraction complete")
+
+        if write_to_file:
+            date = datetime.datetime.now().strftime("%m-%d-%y")
+            write_path += "corpus_"
+            attributes = [preprocess_input, stem_input,
+                          lemmatize_input, remove_stops, self.add_custom_stops, 
+                          self.findings_are_stops, self.names_are_stops]
+            attr_dict = {
+                0: "pp", 1: "stemmed", 2: "lemmatized", 3: "removestops",
+                4: "customstops", 5: "findingstops", 6: "namestops"
+            }
+            for i, attribute in enumerate(attributes):
+                if attribute:
+                    write_path += attr_dict[i]
+                    write_path += "_"
+            if "customstops_findingstops_namestops" in write_path:
+                write_path.replace("customstops_findingstops_namestops", "allstops")
+            write_path += date
+
+            if print_progress:
+                print(f"Writing to file \"{write_path}.txt\"...")
+            f = open(f"{write_path}.txt", "w")
+            for line in corpus:
+                f.write(line + "\n")
+            f.close()
+            if print_progress:
+                print("Corpus written to file")
+
         return corpus
