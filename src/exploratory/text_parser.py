@@ -168,20 +168,25 @@ class TextParser:
         stem=True,
         lemmatize=True,
         return_as_list=True,
+        remove_numbers=True,
     ):
         """Pre-process the contents of a .txt file."""
         data = re.sub("\n", " ", data)
         data = data.lower()
         data = re.sub(r"[^\w\s]|/|\_", "", data)
-        data = re.sub(r"\d+", "", data)  # remove all numbers
+        if remove_numbers: # included this as numbers are useful for NER
+            data = re.sub(r"\d+", "", data)  # remove all numbers
         data = re.sub(HEADERS, "", data)
 
         data = data.split(" ")
         if remove_stops:
+            self.stops = list(stopwords.words("english")) #added 
             data = [w for w in data if w not in self.stops]
             if stem:
+                self.stemmer = SnowballStemmer(language="english")
                 data = [self.stemmer.stem(w) for w in data]
             elif lemmatize:  # TODO: try both and see what happens
+                self.lemmatizer = WordNetLemmatizer()
                 data = [self.lemmatizer.lemmatize(w) for w in data]
         if return_as_list:
             return [w for w in data if w != ""]
