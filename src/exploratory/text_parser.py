@@ -45,6 +45,8 @@ REGEX_PATTERNS = [
     r"\s+deputy chief administrator\s+",
     r"\s+deputy chief investigator\s+",
     r"\s+ibid\s+",
+    r"\s+employee\s+id\s+",
+    r"\s+date\s+of\+appointment\s+",
 ]
 
 
