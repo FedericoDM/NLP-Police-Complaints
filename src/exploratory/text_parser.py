@@ -21,7 +21,7 @@ from nltk.stem.snowball import (
 
 # CONSTANTS
 
-from name_stops import STREET_STOPS, SUFFIX_STOPS, NAME_STOPS
+from name_stops import STREET_STOPS, SUFFIX_STOPS, NAME_STOPS, DIGRAPH_STOPS
 
 CHARS_TO_REMOVE = ["\n", "§"]
 REGEX_PATTERNS = [
@@ -82,12 +82,14 @@ CUSTOM_STOPS = [
     "th",
     "",
     "incident",
-    "ms", "mrs", "mr",
+    "ms", "mrs", "mr", "sgt", "lt",
     "subject",
-    "log", "date", "time"
+    "log", "date", "time",
+    "xx", "xxx", "xxxx", "xxxxx", "xxxxxx", "xxxxxxx", "xxxxxxxx", "xxxxxxxxx"
 ]
 FINDING_STOPS = ["sustained", "not sustained", "unfounded", "exonerated"]
 
+#TODO: consider "TWO-LETTER-STOPS = every digraph from 'abcdefghijklmnopqrstuvwxyz'"
 
 class TextParser:
     CHARS_TO_REMOVE = CHARS_TO_REMOVE
@@ -99,6 +101,7 @@ class TextParser:
     STREET_STOPS = STREET_STOPS
     SUFFIX_STOPS = SUFFIX_STOPS
     NAME_STOPS = NAME_STOPS
+    DIGRAPH_STOPS = DIGRAPH_STOPS
 
     def __init__(
         self,
@@ -106,7 +109,8 @@ class TextParser:
         nlp_task,
         add_custom_stops=False,
         findings_are_stops=False,
-        names_are_stops=False
+        names_are_stops=False,
+        digraphs_are_stops=False
     ):
         # Path should be the folder where the .txt files are located
         self.path = path
@@ -114,6 +118,7 @@ class TextParser:
         self.add_custom_stops = add_custom_stops
         self.findings_are_stops = findings_are_stops
         self.names_are_stops = names_are_stops
+        self.digraphs_are_stops = digraphs_are_stops
 
         if nlp_task == "topic modeling":
 
@@ -129,7 +134,10 @@ class TextParser:
                 self.stops += self.FINDING_STOPS
 
             if self.names_are_stops:
-                self.stops += STREET_STOPS + SUFFIX_STOPS + NAME_STOPS
+                self.stops += self.STREET_STOPS + self.SUFFIX_STOPS + self.NAME_STOPS
+
+            if self.digraphs_are_stops:
+                self.stops += self.DIGRAPH_STOPS
 
         else:
             print(f"Initializing parsers for {self.nlp_task}")
