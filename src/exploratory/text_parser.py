@@ -47,6 +47,7 @@ REGEX_PATTERNS = [
     r"\s+ibid\s+",
     r"\s+employee\s+id\s+",
     r"\s+date\s+of\+appointment\s+",
+    r"independent\s+police\s+review\s+authority",
 ]
 
 
