@@ -48,6 +48,8 @@ REGEX_PATTERNS = [
     r"\s+employee\s+id\s+",
     r"\s+date\s+of\+appointment\s+",
     r"independent\s+police\s+review\s+authority",
+    r"page\s(?:\d+\s+of\s+)?:?\d+",
+    r"investigation\s+number\s+",
 ]
 
 
