@@ -201,6 +201,22 @@ class TextParser:
             text = re.sub(pattern, "", text, flags=re.IGNORECASE)
         return text
 
+    def process_given_text(self, text: str, lower_text=True):
+        """
+        Applies the preprocessing steps to from 'file_to_string'
+        to a given text
+        """
+
+        text = text.strip()
+        if lower_text:
+            text = text.lower()
+        text = re.sub(r"\s+", " ", text)
+
+        # Remove REGEX patterns
+        for pattern in self.REGEX_PATTERNS:
+            text = re.sub(pattern, "", text, flags=re.IGNORECASE)
+        return text
+
     def preprocess(
         self,
         data: str,
