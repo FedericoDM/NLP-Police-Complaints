@@ -8,7 +8,8 @@ def extract_entities_spacy(texts, entity_types=None, model="en_core_web_sm", bat
 
     Parameters:
     texts (list of str): The texts from which to extract entities.
-    entity_types (list of str or str, optional): The types of entities to extract (e.g., 'PERSON', 'ORG'). If None, all types are extracted.
+    entity_types (list of str or str, optional): The types of entities to extract (e.g., 'PERSON', 'ORG'). 
+    If None, all types are extracted.
     model (str, optional): The SpaCy model to use for entity extraction. Defaults to 'en_core_web_sm'.
     batch_size (int, optional): The number of texts to process at a time. Defaults to 1000.
 
