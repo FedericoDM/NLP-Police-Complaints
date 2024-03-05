@@ -45,6 +45,11 @@ REGEX_PATTERNS = [
     r"\s+deputy chief administrator\s+",
     r"\s+deputy chief investigator\s+",
     r"\s+ibid\s+",
+    r"\s+employee\s+id\s+",
+    r"\s+date\s+of\+appointment\s+",
+    r"independent\s+police\s+review\s+authority",
+    r"page\s(?:\d+\s+of\s+)?:?\d+",
+    r"investigation\s+number\s+",
 ]
 
 
@@ -75,21 +80,38 @@ HEADERS = re.compile(
 
 # consider customizing the list of stopwords more to remove very common words
 CUSTOM_STOPS = [
-    "officer", "officers",
+    "officer",
+    "officers",
     "chicago",
-    "il", "illinois",
-    "copa", "ipra",
+    "il",
+    "illinois",
+    "copa",
+    "ipra",
     "th",
     "",
     "incident",
-    "ms", "mrs", "mr", "sgt", "lt",
+    "ms",
+    "mrs",
+    "mr",
+    "sgt",
+    "lt",
     "subject",
-    "log", "date", "time",
-    "xx", "xxx", "xxxx", "xxxxx", "xxxxxx", "xxxxxxx", "xxxxxxxx", "xxxxxxxxx"
+    "log",
+    "date",
+    "time",
+    "xx",
+    "xxx",
+    "xxxx",
+    "xxxxx",
+    "xxxxxx",
+    "xxxxxxx",
+    "xxxxxxxx",
+    "xxxxxxxxx",
 ]
 FINDING_STOPS = ["sustained", "not sustained", "unfounded", "exonerated"]
 
-#TODO: consider "TWO-LETTER-STOPS = every digraph from 'abcdefghijklmnopqrstuvwxyz'"
+# TODO: consider "TWO-LETTER-STOPS = every digraph from 'abcdefghijklmnopqrstuvwxyz'"
+
 
 class TextParser:
     CHARS_TO_REMOVE = CHARS_TO_REMOVE
@@ -110,7 +132,7 @@ class TextParser:
         add_custom_stops=False,
         findings_are_stops=False,
         names_are_stops=False,
-        digraphs_are_stops=False
+        digraphs_are_stops=False,
     ):
         # Path should be the folder where the .txt files are located
         self.path = path
@@ -141,7 +163,7 @@ class TextParser:
 
         else:
             print(f"Initializing parsers for {self.nlp_task}")
-            self.stops = list(stopwords.words("english")) #default stops go here
+            self.stops = list(stopwords.words("english"))  # default stops go here
             # instead of being set in preprocess()
 
     def txt_to_list(self, filename):
@@ -181,6 +203,22 @@ class TextParser:
             text = re.sub(pattern, "", text, flags=re.IGNORECASE)
         return text
 
+    def process_given_text(self, text: str, lower_text=True):
+        """
+        Applies the preprocessing steps to from 'file_to_string'
+        to a given text
+        """
+
+        text = text.strip()
+        if lower_text:
+            text = text.lower()
+        text = re.sub(r"\s+", " ", text)
+
+        # Remove REGEX patterns
+        for pattern in self.REGEX_PATTERNS:
+            text = re.sub(pattern, "", text, flags=re.IGNORECASE)
+        return text
+
     def preprocess(
         self,
         data: str,
@@ -194,19 +232,19 @@ class TextParser:
         data = re.sub("\n", " ", data)
         data = data.lower()
         data = re.sub(r"[^\w\s]|/|\_", "", data)
-        if remove_numbers: # included this as numbers are useful for NER
+        if remove_numbers:  # included this as numbers are useful for NER
             data = re.sub(r"\d+", "", data)  # remove all numbers
         data = re.sub(HEADERS, "", data)
 
         data = data.split(" ")
         if remove_stops:
-            # self.stops = list(stopwords.words("english")) #added 
+            # self.stops = list(stopwords.words("english")) #added
             # ^ this would override all the added stops. instead declare in __init__
             data = [w for w in data if w not in self.stops]
             if stem:
                 self.stemmer = SnowballStemmer(language="english")
                 data = [self.stemmer.stem(w) for w in data]
-            elif lemmatize:  
+            elif lemmatize:
                 # doing both stem and lemmatize seems no different than lemmatize-only
                 self.lemmatizer = WordNetLemmatizer()
                 data = [self.lemmatizer.lemmatize(w) for w in data]
@@ -223,7 +261,7 @@ class TextParser:
         lemmatize_input=False,
         print_progress=False,
         write_to_file=False,
-        write_path="../../corpora/"
+        write_path="../../corpora/",
     ):
         """
         Extract text from every .txt file in a folder.
@@ -256,12 +294,23 @@ class TextParser:
         if write_to_file:
             date = datetime.datetime.now().strftime("%m-%d-%y")
             write_path += "corpus_"
-            attributes = [preprocess_input, stem_input,
-                          lemmatize_input, remove_stops, self.add_custom_stops, 
-                          self.findings_are_stops, self.names_are_stops]
+            attributes = [
+                preprocess_input,
+                stem_input,
+                lemmatize_input,
+                remove_stops,
+                self.add_custom_stops,
+                self.findings_are_stops,
+                self.names_are_stops,
+            ]
             attr_dict = {
-                0: "pp", 1: "stemmed", 2: "lemmatized", 3: "removestops",
-                4: "customstops", 5: "findingstops", 6: "namestops"
+                0: "pp",
+                1: "stemmed",
+                2: "lemmatized",
+                3: "removestops",
+                4: "customstops",
+                5: "findingstops",
+                6: "namestops",
             }
             for i, attribute in enumerate(attributes):
                 if attribute:
@@ -272,7 +321,7 @@ class TextParser:
             write_path += date
 
             if print_progress:
-                print(f"Writing to file \"{write_path}.txt\"...")
+                print(f'Writing to file "{write_path}.txt"...')
             f = open(f"{write_path}.txt", "w")
             for line in corpus:
                 f.write(line + "\n")
