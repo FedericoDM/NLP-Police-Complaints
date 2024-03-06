@@ -85,7 +85,10 @@ CUSTOM_STOPS = [
     "ms", "mrs", "mr", "sgt", "lt",
     "subject",
     "log", "date", "time",
-    "xx", "xxx", "xxxx", "xxxxx", "xxxxxx", "xxxxxxx", "xxxxxxxx", "xxxxxxxxx"
+    "xx", "xxx", "xxxx", "xxxxx", "xxxxxx", "xxxxxxx", "xxxxxxxx", "xxxxxxxxx",
+    "nan",
+    "ppo",
+    "fto"
 ]
 FINDING_STOPS = ["sustained", "not sustained", "unfounded", "exonerated"]
 
