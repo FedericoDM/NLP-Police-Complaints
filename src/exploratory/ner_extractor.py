@@ -1,5 +1,7 @@
 import pandas as pd
 from transformers import pipeline
+import os
+import random
 
 class ExtractEntities:
     def __init__(self, model="dbmdz/bert-large-cased-finetuned-conll03-english"):
@@ -52,32 +54,32 @@ class ExtractEntities:
 #example of usage:
 
 # Load and preprocess the data
-cases = os.listdir(text_files_dir)
-cases = [case for case in cases if case.endswith(".txt")]
-random.seed(43)
-cases = random.sample(cases, 5)  # Randomly select 5 cases
+# cases = os.listdir(text_files_dir)
+# cases = [case for case in cases if case.endswith(".txt")]
+# random.seed(43)
+# cases = random.sample(cases, 5)  # Randomly select 5 cases
 
-texts = []
-for case in cases:
-    # Extract the report number from the filename (assuming format '1234567.txt')
-    report_number = case.split('.')[0]
-    with open(os.path.join(PATH, case), 'r') as file:
-        text = file.read()
-    # Store the tuple (report_number, case_text)
-    texts.append((report_number, text))
+# texts = []
+# for case in cases:
+#     # Extract the report number from the filename (assuming format '1234567.txt')
+#     report_number = case.split('.')[0]
+#     with open(os.path.join(PATH, case), 'r') as file:
+#         text = file.read()
+#     # Store the tuple (report_number, case_text)
+#     texts.append((report_number, text))
 
 # Call ExtractEntities, specify model bert-addresses for most usable ner model
 
 extractor = ExtractEntities(model="ctrlbuzz/bert-addresses")
 
 # create list of dataframes if processing more then one report
-dataframes = []
-for report_number, text in texts:
-    df = extractor.create_dataframe(report_number, text, counts=True)
-    dataframes.append(df)
+# dataframes = []
+# for report_number, text in texts:
+#     df = extractor.create_dataframe(report_number, text, counts=True)
+#     dataframes.append(df)
 
-# Concatenate all dataframes to have one unified dataframe
-final_df = pd.concat(dataframes, ignore_index=True)
+# # Concatenate all dataframes to have one unified dataframe
+# final_df = pd.concat(dataframes, ignore_index=True)
 
 # Use aggregate_entities to create full entities without seperation
 
@@ -110,5 +112,5 @@ def aggregate_entities(df):
     return pd.DataFrame(aggregated_entities)
 
 # Example:
-aggregated_df = aggregate_entities(final_df)
-print(aggregated_df)
+# aggregated_df = aggregate_entities(final_df)
+# print(aggregated_df)

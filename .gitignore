@@ -163,3 +163,13 @@ cython_debug/
 *.pdf
 *.txt
 *.csv
+
+#Ignore .DS_Store
+*.DS_Store
+# Ignore results folder
+results/
+
+# Ignore finetuned model path
+finetuned_bart_model/
+legal-BERT_checkpoint/
+spacy_ner_checkpoint/
