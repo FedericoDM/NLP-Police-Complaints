@@ -108,7 +108,7 @@ CUSTOM_STOPS = [
     "xxxxxxxx",
     "xxxxxxxxx",
     "ppo",
-    "fto"
+    "fto",
 ]
 FINDING_STOPS = ["sustained", "not sustained", "unfounded", "exonerated"]
 
