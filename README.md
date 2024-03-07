@@ -39,20 +39,6 @@ Matt also did some exploratory analysis, which is not currently in the repo. His
 
 ## Additional Information
 
-Repo structure:
-
-data
-scr
-copa_scraper
-data_cleaning
-exploratory
-  text_parser.py : contains a class that performs all the necessary text cleaning for the current NLP tasks. 334 lines
-  ner_extractor.py: class and functions that uses bert-addresses for NER extraction. ~100 lines
-   Jon_exploratory, advanced, and spacy.ipynb: notebooks used to explore, fine-tune, and evaluate NER models.  ~600 lines.
-Modeling
-text_files
-
-
 **Data Cleaning**
 
 In order to create a unified cleaning procedure, we created the `TextParser` class in the `text_parser.py` file. This class contains methods to clean the text, such as removing punctuation, removing stop words, lemmatizing, etc. Note that several constants are defined _within_ the file.
