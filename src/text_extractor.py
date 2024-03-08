@@ -2,7 +2,6 @@
 PyPDF2 library and stores the extracted text in a CSV file.
 
 Author: Jonathan Juarez
-
 """
 
 import csv

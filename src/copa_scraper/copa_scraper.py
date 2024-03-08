@@ -1,4 +1,9 @@
-"""This script will extract the Police Reports from the COPA website"""
+"""
+This script will extract the Police Reports from the COPA website 
+by using the requests and BeautifulSoup libraries.
+
+Author: Federico Dominguez Molina
+"""
 
 import os
 import re

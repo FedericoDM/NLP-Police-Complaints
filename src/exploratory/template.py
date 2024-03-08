@@ -1,6 +1,8 @@
     """
     This module contains the templates for the entities in the dataset. These
     templates are used by the NER pipeline.
+
+    Author: Jonathan Juarez
     """
 
 templates = {
