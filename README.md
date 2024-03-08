@@ -8,7 +8,7 @@ Team members:
 - Matt Jackson
 - Federico Dominguez Molina
 
-The aim of the project is to apply a Natural Language Processing Task (NLP) to gain insights on the Police Complaints available at [COPA's Case Portal](https://www.chicagocopa.org/data-cases/case-portal/). There project consists of three main parts:
+The aim of the project is to apply a Natural Language Processing Task (NLP) to gain insights on the Police Complaints available at [COPA's Case Portal](https://www.chicagocopa.org/data-cases/case-portal/). The project consists of three main parts:
 
 ### 1. Scraping the data
 
