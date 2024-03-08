@@ -8,7 +8,7 @@ Team members:
 - Matt Jackson
 - Federico Dominguez Molina
 
-The aim of the project is to apply a Natural Language Processing Task (NLP) on the Police Complaints available at [COPA's Case Portal](https://www.chicagocopa.org/data-cases/case-portal/). There project consists of three main parts:
+The aim of the project is to apply a Natural Language Processing Task (NLP) to gain insights on the Police Complaints available at [COPA's Case Portal](https://www.chicagocopa.org/data-cases/case-portal/). There project consists of three main parts:
 
 ### 1. Scraping the data
 
@@ -16,11 +16,15 @@ a. With the copa_scraper.py file, located in `src/copa_scraper/copa_scraper.py`,
 
 The pipeline can be run like this, where you need the complete path to the `copa_scraper.py` script.
 
-```python3 /NLP-Police-Complaints/src/copa_scraper/copa_scraper.py```
+```bash 
+python3 /NLP-Police-Complaints/src/copa_scraper/copa_scraper.py
+```
 
 b. Then, we need to remove the PDF files that do not correspond to a Final Summary Report. This is done with the `remove_useles_pdfs.py` script in the `src/data_cleaning/` folder. This script reads the `copa_data_with_pdf.csv` file from the `data/` folder (this .csv file was obtained in the previous step) and removes the PDFs that do not correspond to a Final Summary Report. The script is run like this:
 
-```python3 /NLP-Police-Complaints/src/data_cleaning/remove_useless_pdfs.py```
+```bash
+python3 /NLP-Police-Complaints/src/data_cleaning remove_useless_pdfs.py
+```
 
 
 ### 2. Extracting the text from the PDFs
@@ -30,18 +34,22 @@ This was done using `extractor.py`. PyPDF2 library was used to extract the text 
 Note that this script roughly takes 2 hours to run. Greater efficiency can be done by tweaking parts of the code or using a different PDF extractor package.
 
 
-## 3. Exploratory Data Analysis
+## 3. Natural Language Processing (NLP) tasks
 
-You can find the exploratory data analysis in the `exploratory/` folder. I added my own EDA (`fede_exploratory.ipynb`), where I use a summarizer model from Hugging Face and get a summary for ten random complaints. I pre-processed the text and I also tweaked with some model hyperparameters. The results are in the notebook, along with some steps to follow.
+This is the main part of the project since it involves the application of NLP techniques to the extracted reports.
 
-Matt also did some exploratory analysis, which is not currently in the repo. His focuses more on topic modelling.
+One can find the NLP pipelines and analysis in the `exploratory/` folder. Within the folder, each team member created their own notebook with an initial exploratory analysis. Also, each team member created different notebooks and files as required for their specific NLP task.
+
+Note that each team member pursued a different NLP task. Jonathan focused on Named Entity Recognition (NER), Matt focused on topic modeling, and Federico focused on summarization. Moreover, the unified text cleaning procedure (`text_parser.py`) along with the name stops file (`name_stops.py`) are also located in this folder.
 
 
 ## Additional Information
 
 **Data Cleaning**
 
-In order to create a unified cleaning procedure, we created the `TextParser` class in the `text_parser.py` file. This class contains methods to clean the text, such as removing punctuation, removing stop words, lemmatizing, etc. Note that several constants are defined _within_ the file.
+In order to create a unified cleaning procedure, we created the `TextParser` class in the `text_parser.py` file (which was mentioned in the previous section). This class contains methods to clean the text, such as removing punctuation, removing stop words, lemmatizing, etc. Note that several constants are defined _within_ the file.
+
+Moreover, there is an additional pipeline used to remove PDFs that do not correspond to a Final Summary Report. This is done with the `remove_useles_pdfs.py` script in the `src/data_cleaning/` folder. This script reads the `copa_data_with_pdf.csv` file from the `data/` folder (this .csv file was obtained in the previous step) and removes the PDFs that do not correspond to a Final Summary Report. 
 
 
 The class works as follows:

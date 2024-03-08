@@ -1,6 +1,6 @@
 """
 This script contains a class that performs all the necessary text cleaning 
-for the current NLP tasks
+for the current NLP tasks. It contains around 335 lines of code.
 """
 
 import os
@@ -108,7 +108,7 @@ CUSTOM_STOPS = [
     "xxxxxxxx",
     "xxxxxxxxx",
     "ppo",
-    "fto"
+    "fto",
 ]
 FINDING_STOPS = ["sustained", "not sustained", "unfounded", "exonerated"]
 

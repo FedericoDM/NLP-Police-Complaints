@@ -47,7 +47,7 @@ class Summarizer:
         early_stopping: bool = True,
     ):
         """
-        This function will generate the summary
+        This function will generate the summary with the given parameters
         """
 
         # Generate summary
