@@ -1,8 +1,12 @@
-"""This script extracts the files from all PDFs"""
+"""This script extracts the files from all PDFs by using the
+PyPDF2 library and stores the extracted text in a CSV file.
+
+Author: Jonathan Juarez
+
+"""
 
 import csv
 import os
-import re
 
 import pandas as pd
 import PyPDF2

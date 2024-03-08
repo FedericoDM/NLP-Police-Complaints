@@ -1,6 +1,11 @@
 """
 This script contains a class that performs all the necessary text cleaning 
 for the current NLP tasks. It contains around 335 lines of code.
+
+The code uses Regular Expressions, several customized doc words and
+if required, stemming and lemmatization procedures.
+
+Authors: Federico Dominguez, Matt Jackson and Jonathan Juarez
 """
 
 import os

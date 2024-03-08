@@ -1,3 +1,8 @@
+    """
+    This module contains the templates for the entities in the dataset. These
+    templates are used by the NER pipeline.
+    """
+
 templates = {
     'PERSON': [
         "[PERSON] was seen at the location.",
