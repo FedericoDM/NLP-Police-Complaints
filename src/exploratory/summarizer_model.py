@@ -1,5 +1,11 @@
 """
 This class works as a wrapper for the Hugging Face API for the summarizer model
+
+We can provide a complaint text and the model name to generate a summary. The
+class will change the parameters of the model according to the model's name, 
+and it will return the corresponding summary.
+
+Author: Federico Dominguez Molina
 """
 
 from transformers import AutoModelForSeq2SeqLM, AutoTokenizer

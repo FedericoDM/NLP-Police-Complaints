@@ -1,4 +1,8 @@
-"""This script removes PDFs that are not useful for the project"""
+"""
+This script removes PDFs that are not useful for the project.
+
+Author: Federico Dominguez Molina
+"""
 
 import os
 import pandas as pd
