@@ -1,4 +1,4 @@
-"""This script will extract the data from the COPA website"""
+"""This script will extract the Police Reports from the COPA website"""
 
 import os
 import re

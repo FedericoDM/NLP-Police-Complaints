@@ -162,3 +162,7 @@ cython_debug/
 # Ignore pdfs, txt, csv
 *.pdf
 *.txt
+
+#  Ignore finetuned bart model path
+
+finetuned_bart_model/
